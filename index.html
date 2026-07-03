@@ -41,7 +41,9 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15p
 .iconbtn:hover{border-color:var(--accent);color:var(--accent)}
 .iconbtn.accent{background:var(--accent);color:#fff;border-color:var(--accent);font-family:var(--sans);font-weight:700}
 .iconbtn.accent:hover{opacity:.9;color:#fff}
-.showcase{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin:26px 0 12px}
+.showcase{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin:0 0 12px}
+.stickyhead{position:sticky;top:0;z-index:30;background:var(--bg);padding:18px 0 12px;transition:box-shadow .2s ease}
+.stickyhead.stuck{box-shadow:0 8px 22px -14px rgba(21,23,28,.28)}
 .tabs{display:flex;gap:26px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
 .tab{font-size:21px;font-weight:700;letter-spacing:-.01em;color:var(--mut);background:none;border:none;cursor:pointer;padding:0 0 12px;position:relative;font-family:var(--sans)}
 .tab:hover{color:var(--ink-2)}
@@ -154,7 +156,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15p
 <body>
 <div class="wrap">
   <div class="top">
-    <div class="brand"><span class="sq"></span><b>Toolshelf</b><small>DESIGN COLLECTION · 分享版</small></div>
+    <div class="brand"><span class="sq"></span><b>YEN's</b><small>DESIGN COLLECTION</small></div>
     <div class="tools">
       <button class="iconbtn" id="exportBtn">匯出</button>
       <button class="iconbtn" id="importBtn">匯入</button>
@@ -162,13 +164,13 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15p
       <input type="file" id="importFile" accept=".json,application/json,text/plain,text/json" hidden>
     </div>
   </div>
-  <div class="showcase" id="showcase">SHOWCASE — 全部</div>
+  <div class="stickyhead"><div class="showcase" id="showcase">SHOWCASE — 全部</div>
   <div class="tabs" id="tabs"></div>
   <div class="subbar" id="subbar"></div>
   <div class="ctrls">
     <div class="searchrow"><input class="search" id="search" type="search" placeholder="搜尋名稱、標籤、用途…" aria-label="搜尋"></div>
     <select class="sortsel" id="sortSel" aria-label="排序"><option value="recent">最近加入</option><option value="az">A–Z</option></select>
-  </div>
+  </div></div>
   <div class="tagfilter" id="tagFilter"></div>
   <div class="grid" id="grid"></div>
   <div class="foot"><span id="footCount"></span><span>由 Yen 整理 · 點卡片看介紹、造訪原站</span><a id="sponsorLink" class="sponsor" target="_blank" rel="noopener" style="display:none"></a></div>
@@ -508,8 +510,9 @@ document.querySelectorAll('[data-cf]').forEach(b=>b.onclick=closeForm);
 document.querySelectorAll('[data-cc]').forEach(b=>b.onclick=()=>{$('catOverlay').classList.remove('show');render();});
 [['detailOverlay',closeDetail],['formOverlay',closeForm],['catOverlay',function(){$('catOverlay').classList.remove('show');render();}]].forEach(p=>$(p[0]).addEventListener('click',e=>{if(e.target.id===p[0])p[1]();}));
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDetail();closeForm();$('catOverlay').classList.remove('show');}});
-if(READ_ONLY){ ['addBtn','importBtn','resetBtn'].forEach(id=>{ const e=$(id); if(e) e.style.display='none'; }); }
+if(READ_ONLY){ ['addBtn','importBtn','resetBtn','exportBtn'].forEach(id=>{ const e=$(id); if(e) e.style.display='none'; }); }
 if(SPONSOR.show){ const sp=$('sponsorLink'); if(sp){ sp.href=SPONSOR.url; sp.textContent=SPONSOR.label; sp.style.display='inline-flex'; } }
+(function(){ const sh=document.querySelector(".stickyhead"); if(sh){ const f=()=>sh.classList.toggle("stuck",window.scrollY>8); window.addEventListener("scroll",f,{passive:true}); f(); } })();
 (async function(){ await load(); render(); })();
 </script>
 </body>
