@@ -93,8 +93,11 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15p
 .fxrain.dim{opacity:.12}
 .fxcol{display:flex;flex-direction:column;gap:18px;font-family:var(--mono);font-size:13px;color:#c4c9d4;transition-property:transform;transition-timing-function:cubic-bezier(.3,.55,.25,1);white-space:nowrap}
 .fxcol div{max-width:230px;overflow:hidden;text-overflow:ellipsis}
-.fxwinline{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.85);font-family:var(--mono);font-size:clamp(18px,4vw,34px);color:#fff;opacity:0;transition:opacity .35s,transform .45s cubic-bezier(.2,.8,.25,1);max-width:86vw;text-align:center}
-.fxwinline.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.fxwinwrap{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.85);opacity:0;transition:opacity .35s,transform .45s cubic-bezier(.2,.8,.25,1);text-align:center;max-width:86vw}
+.fxwinwrap.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.fxwinlabel{font-family:var(--mono);font-size:13px;letter-spacing:.2em;color:#8f96a3;margin-bottom:14px}
+.fxwinline{font-family:var(--mono);font-size:clamp(18px,4vw,34px);color:#fff}
+.fxwinbar{width:56px;height:3px;background:var(--accent);margin:18px auto 0;border-radius:2px}
 .fxcursor{position:fixed;left:0;top:0;z-index:62;pointer-events:none;transition:transform .44s cubic-bezier(.3,.7,.3,1)}
 .fxselbox{position:fixed;z-index:61;border:1.5px solid var(--accent);background:rgba(31,61,240,.06);pointer-events:none;border-radius:4px}
 .fxselbox i{position:absolute;width:8px;height:8px;background:#fff;border:1.5px solid var(--accent);border-radius:2px}
@@ -711,17 +714,18 @@ function fxRain(){
     for(let i=0;i<perCol;i++)names+='<div>'+esc(pickFrom(items).title)+'</div>';
     h+='<div class="fxcol" style="transition-duration:'+(1.9+c*0.4)+'s">'+names+'</div>';
   }
-  h+='</div><div class="fxwinline">'+esc(win.title)+'</div>';
+  h+='</div><div class="fxwinwrap"><div class="fxwinlabel">🎲 抽中這個</div><div class="fxwinline">'+esc(win.title)+'</div><div class="fxwinbar"></div></div>';
   ov.innerHTML=h;
   document.body.appendChild(ov); requestAnimationFrame(()=>ov.classList.add('in'));
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
     [...ov.querySelectorAll('.fxcol')].forEach((el,i)=>{el.style.transform='translateY('+(-(1300+i*280))+'px)';});
   }));
-  setTimeout(()=>{ov.querySelector('.fxrain').classList.add('dim');ov.querySelector('.fxwinline').classList.add('show');},2300);
-  setTimeout(()=>{fxRemove(ov);openDetail(win.id);},3600);
+  setTimeout(()=>{ov.querySelector('.fxrain').classList.add('dim');ov.querySelector('.fxwinwrap').classList.add('show');},2300);
+  setTimeout(()=>{fxRemove(ov);openDetail(win.id);},4300);
 }
 function fxCursor(){
-  const tiles=[...document.querySelectorAll('#grid .tile')].filter(t=>{const r=t.getBoundingClientRect();return r.top>=-40&&r.bottom<=innerHeight+60&&r.width>0;});
+  const hb=(document.querySelector('.stickyhead')||{getBoundingClientRect:()=>({bottom:0})}).getBoundingClientRect().bottom;
+  const tiles=[...document.querySelectorAll('#grid .tile')].filter(t=>{const r=t.getBoundingClientRect();return r.top>=hb+8&&r.bottom<=innerHeight-8&&r.width>0;});
   if(tiles.length<3){fxSlot();return;}
   const winTile=pickFrom(tiles), winId=winTile.dataset.id;
   const g=$('grid'); g.classList.add('dimall');
